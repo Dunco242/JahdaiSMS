@@ -1,0 +1,155 @@
+{% extends "students/base.html" %}
+
+{% block body %}
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+    	<i class="fa-solid fa-graduation-cap fa-lg">&nbsp;</i>Student Management System</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarColor02">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+          	<i class="fa-solid fa-list fa-lg"></i>All Students</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+          	<i class="fa-solid fa-user-plus fa-lg"></i>Add Students</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+          	<i class="fa-solid fa-person-chalkboard fa-lg"></i>All Staff</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+          	<i class="fa-solid fa-user-plus fa-lg"></i>Add Staff</a>
+        </li>
+    </div>
+  </div>
+</nav>
+	<div class="container-fluid">
+		<h3 class="m-4">All Students</h3>
+			<div class="row">
+				<div class="col-12">
+					{% if students %}
+					<div class="card bg-light ms-4 me-4 mb-4">
+					  <div class="card-header"><i class="fa-solid fa-list fa-lg"></i> Student Records</div>
+					  <div class="card-body">
+					    <p class="card-text">
+					    	<div class="table-responsive">
+					    		<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Student ID:</th>
+      <th scope="col">Student Name:</th>
+      <th scope="col">Birth Date:</th>
+      <th scope="col">Fee Status:</th>
+      <th scope="col">Student Status:</th>
+      <th scope="col">Actions:</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for student in students %}
+    <tr>
+        <td>{{ student.id }}</td>
+        <td>{{ student.first_name }} {{ student.last_name }}</td>
+        <td>{{ student.birth_date }}</td>
+        <td class="{% if student.fee_status == 'Paid' %}bg-success{% elif student.fee_status == 'Due' %}bg-warning{% elif student.fee_status == 'Past Due' %}bg-danger{% endif %}">{{ student.get_fee_status_display }}</td>
+
+
+        <td class="{% if student.student_status == 'Current' %}bg-success{% elif student.student_status == 'Sick' %}bg-warning{% elif student.student_status == 'Past' %}bg-danger{% endif %}">
+    {{ student.get_student_status_display }}
+</td>
+
+    	<td> <button type="button" class="btn btn-success me-1" href="{% url 'view_student' student.id %}" data-bs-toggle="modal" data-bs-target="#myModal{{student.id}}"><i class="fa-solid fa-circle-info fa-lg"></i></button>
+
+    		<!-- Modal View Student -->
+    		<div class="modal" id="myModal{{student.id}}" tabindex="-1" aria-labelledby="myModalLabel1" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Student: {{ student.first_name }} {{ student.last_name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-unstyled">
+        	<li> Student ID: <strong>{{ student.id }}</strong></li>
+        	<li> Birth Date: <strong>{{ student.birth_date }}</strong></li>
+		    	<li> Mother's Name: <strong>{{ student.mother_Fname }} {{ student.mother_Lname }}</strong></li>
+		    	<li> Father's Name: <strong>{{ student.father_Fname }} {{ student.father_Lname }}</strong></li>
+		    	<li> Email: <strong>{{ student.email }}</strong></li>
+		    	<li> Phone: <strong>{{ student.phone }}</strong></li>
+		    	<li> Fee: <strong>{{ student.fee }}</strong></li>
+		    	<li> Fee Status: <strong>{{ student.fee_status }}</strong></li>
+		    	 {% if student.student_status == 'Current' %}blue
+            {% elif student.student_status == 'Sick' %}orange
+            {% elif student.student_status == 'Past' %}red
+            {% endif %}">
+          <li> Student Status: <strong>{{ student.student_status }}</strong></li>
+		    	<li> Allergies: <strong>{{ student.allergies }}</strong></li>
+		    </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <a class="btn btn-warning me-1" href="{% url 'edit' student.id %}"><i class="fa-solid fa-pen-to-square fa-lg"></i></a>
+
+  <button type="button" class='btn btn-danger' data-bs-toggle="modal" data-bs-target="#delete{{student.id}}"><i class="fa-regular fa-trash-can fa-lg"></i>&nbsp;</button>
+
+  <!--Modal - Delete Student -->
+  <div class="modal" id="delete{{student.id}}" tabindex="-1" aria-labelledby="myModalLabel2" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Student: {{ student.first_name }} {{ student.last_name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are You Sure You Want To Delete {{ student.first_name }} {{ student.last_name }}</p>
+        
+      </div>
+      <div class="modal-footer">
+        <form action="{% url 'delete' student.id %}" method="POST">
+          {% csrf_token %}
+          <input type="submit" class="btn btn-primary" value="Delete">
+        </form>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+    	</td>
+
+    {% endfor %}
+  </tbody>
+</table>
+
+					    </p>
+					  </div>
+					</div>
+					{% else %}
+						<h5 class="alert-primary ms-4 me-4">No Records Found</h5>
+					{% endif %}
+					
+				</div>
+			</div>	
+			<footer class="mt-auto mb-4">
+				<div class="text-center">
+					<span>
+						Copyright &copy; <script>document.write(new Date().getFullYear())</script> Jahdai's Care Babysitting Services.
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+	</body>
+</html>
+
+
+{% endblock %}

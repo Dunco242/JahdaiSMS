@@ -1,0 +1,137 @@
+{% extends "students/base.html" %}
+
+{% block body %}
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+    	<i class="fa-solid fa-graduation-cap fa-lg">&nbsp;</i>Student Management System</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarColor02">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+          	<i class="fa-solid fa-list fa-lg"></i>All Students</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+          	<i class="fa-solid fa-user-plus fa-lg"></i>Add Students</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+          	<i class="fa-solid fa-person-chalkboard fa-lg"></i>All Staff</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+          	<i class="fa-solid fa-user-plus fa-lg"></i>Add Staff</a>
+        </li>
+    </div>
+  </div>
+</nav>
+	<div class="container-fluid">
+		<h3 class="m-4">Staff</h3>
+			<div class="row">
+				<div class="col-12">
+					{% if staff %}
+					<div class="card bg-light ms-4 me-4 mb-4">
+					  <div class="card-header"><i class="fa-solid fa-list fa-lg"></i> Staff Records</div>
+					  <div class="card-body">
+					    <p class="card-text">
+					    	<div class="table-responsive">
+					    		<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Staff ID:</th>
+      <th scope="col">Staff Name:</th>
+      <th scope="col">Birth Date:</th>
+      <th scope="col">Certificates:</th>
+      <th scope="col">Actions:</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for staff in staff %}
+    <tr>
+        <td>{{ staff.id }}</td>
+        <td>{{ staff.staff_first_name }} {{ staff.staff_last_name }}</td>
+        <td>{{ staff.staff_birth_date }}</td>
+        <td>{{ staff.staff_certificates }}</td>
+    	<td> <button type="button" class="btn btn-success me-1" href="{% url 'view_staff' staff.id %}" data-bs-toggle="modal" data-bs-target="#myModal{{staff.id}}"><i class="fa-solid fa-circle-info fa-lg"></i></button>
+
+    		<!-- Modal View Student -->
+    		<div class="modal" id="myModal{{staff.id}}" tabindex="-1" aria-labelledby="myModalLabel1" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Staff Member: {{ staff.staff_first_name }} {{ staff.staff_last_name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-unstyled">
+        	<li> Staff ID: <strong>{{ staff.id }}</strong></li>
+        	<li> Birth Date: <strong>{{ staff.birth_date }}</strong></li>
+		    	<li> Certificates: <strong>{{ staff.certificates }}</strong></li>
+		    </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <a class="btn btn-warning me-1" href="{% url 'edit-staff' staff.id %}"><i class="fa-solid fa-pen-to-square fa-lg"></i></a>
+
+  <button type="button" class='btn btn-danger' data-bs-toggle="modal" data-bs-target="#delete{{staff.id}}"><i class="fa-regular fa-trash-can fa-lg"></i>&nbsp;</button>
+
+  <!--Modal - Delete Staff -->
+  <div class="modal" id="delete{{staff.id}}" tabindex="-1" aria-labelledby="myModalLabel2" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Staff: {{ staff.staff_first_name }} {{ staff.staff_last_name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are You Sure You Want To Delete {{ staff.staff_first_name }} {{ staff.staff_last_name }}</p>
+        
+      </div>
+      <div class="modal-footer">
+        <form action="{% url 'delete' staff.id %}" method="POST">
+          {% csrf_token %}
+          <input type="submit" class="btn btn-primary" value="Delete">
+        </form>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+    	</td>
+
+    {% endfor %}
+  </tbody>
+</table>
+
+					    </p>
+					  </div>
+					</div>
+					{% else %}
+						<h5 class="alert-primary ms-4 me-4">No Records Found</h5>
+					{% endif %}
+					
+				</div>
+			</div>	
+			<footer class="mt-auto mb-4">
+				<div class="text-center">
+					<span>
+						Copyright &copy; <script>document.write(new Date().getFullYear())</script> Jahdai's Care Babysitting Services.
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+	</body>
+</html>
+
+
+{% endblock %}
