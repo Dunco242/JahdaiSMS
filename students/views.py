@@ -1,9 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Student, Staff, Certification
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from .forms import StudentForm, StaffForm
+from django.core.mail import send_mail
+from .forms import StudentForm, StaffForm, IncidentForm
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
 @login_required(login_url="/accounts/login/")
@@ -169,3 +172,33 @@ def add_staff(request):
 	return render(request, 'students/add_staff.html', {
 		'form': StaffForm()
 		})
+
+
+
+
+@login_required(login_url="/accounts/login/")
+@csrf_exempt
+def notify_incident(request, student_id):
+    student = Student.objects.get(id=student_id)
+    if request.method == 'POST':
+        incident_report = request.POST.get('message')
+        # Prepare the letter
+        letter = f"""
+        Dear Mr./Mrs/Ms. {student.last_name}:
+
+        This serves as notice that your child, {student.first_name} {student.last_name},
+
+        {incident_report}
+
+        Please feel free to contact the school for any question(s), that you may have regarding this notice.
+
+        Yours truly;
+        """
+        send_mail(
+            'Incident Report',
+            letter,
+            'jahdaiscare@gmail.com',
+            [student.email],
+        )
+        return redirect('index')  # Redirect to index after sending the email
+    return render(request, 'students/notify_incident.html', {'student': student})

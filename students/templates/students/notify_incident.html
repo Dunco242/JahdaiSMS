@@ -1,0 +1,54 @@
+{% extends 'students/base.html' %}
+
+{% block body %}
+<h3 class="text-center m-4">Send Incident Report</h3>
+    <div class='row justify-content-center'>
+        <div class='col-6'>
+            <div class="card bg-light mb-3">
+                <div class="card-header">
+                    <!-- You can add a header here if you want -->
+                </div>
+                <div class="card-body">
+                    <p>Dear Mr./Mrs/Ms. {{ student.last_name }}:</p>
+
+                    <p>This serves as notice that your child, <em>{{ student.first_name }} {{ student.last_name }}</em>,</p>
+
+                    <textarea id="message" name="message" rows="4" cols="50" placeholder="Type your message here..."></textarea>
+
+                    <p>Please feel free to contact the school for any question(s), that you may have regarding this notice.</p>
+
+                    <p>Yours truly;</p>
+                    
+                    <button id="sendButton" type="button" class="btn btn-primary">Send</button>
+                    <a href="{% url 'index' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Your JavaScript code -->
+    <script>
+var notifyIncidentUrl = "{% url 'notify_incident' student.id %}";
+
+$(document).ready(function() {
+    $('#sendButton').click(function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: notifyIncidentUrl,
+            type: 'post',
+            data: {
+                message: $('#message').val(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function() {
+                window.location.href = "{% url 'index' %}";
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}

@@ -79,3 +79,8 @@ class StaffForm(forms.ModelForm):
                 'staff_email': forms.EmailInput(attrs={'class': 'form-control'}),
                 'staff_phone': forms.TextInput(attrs={'class': 'form-control'}),
         }   
+
+
+
+class IncidentForm(forms.Form):
+    incident_report = forms.CharField(widget=forms.Textarea)

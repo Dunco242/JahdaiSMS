@@ -100,7 +100,7 @@
 </div>
 
   <a class="btn btn-warning me-1" href="{% url 'edit' student.id %}"><i class="fa-solid fa-pen-to-square fa-lg"></i></a>
-
+  <a class="btn btn-danger me-1" href="{% url 'notify_incident' student.id%}"><i class="fa-regular fa-bell fa-lg"></i></a>
   <button type="button" class='btn btn-danger' data-bs-toggle="modal" data-bs-target="#delete{{student.id}}"><i class="fa-regular fa-trash-can fa-lg"></i>&nbsp;</button>
 
   <!--Modal - Delete Student -->
